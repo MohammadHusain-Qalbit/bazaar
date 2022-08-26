@@ -1,1 +1,1 @@
-# expressjs-structure
+# ExpressJS project setup
