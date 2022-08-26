@@ -1,8 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 require('dotenv').config()
-const router_v1 = require('./src/routes/v1/common.route');
-const router_v2 = require('./src/routes/v2/common.route');
+const router_v1 = require('./src/routes/v1/index.route');
+const { invalidEndpoint } = require('./src/middlewares/v1/common.middlewares');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -15,18 +15,17 @@ app.use(
   })
 );
 
-app.get('/', (req, res, next)=>{ 
-  console.log('first route')
-  next()
-  // return
-  res.json({'message': 'first route called'}); 
-}, (req, res) => {
+app.get('/', (req, res) => {
   res.json({'message': 'ok'});
 })
 
 
 app.use('/v1',router_v1);
-app.use('/v2',router_v2);
+
+
+// middleware to catch all invalid endpoints
+app.use(invalidEndpoint);
+
 
 /* Error handler middleware */
 app.use((err, req, res, next) => {
@@ -37,6 +36,8 @@ app.use((err, req, res, next) => {
   
   return;
 });
+
+
 
 app.listen(port, '0.0.0.0', () => {
   console.log(`Example app listening at http://localhost:${port}`)
